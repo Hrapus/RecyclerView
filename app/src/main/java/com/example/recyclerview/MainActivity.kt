@@ -1,19 +1,21 @@
 package com.example.recyclerview
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recyclerview.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     private val adapter = PersonAdapter()
-    private val imageIdList = listOf(
-        R.drawable.person_1,
-        R.drawable.person_2,
-        R.drawable.person_3,
-        R.drawable.person_4,)
+    private var editLauncher: ActivityResultLauncher<Intent>? = null
+
+
     private var index = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,16 +24,18 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         init()
+        editLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+            if(it.resultCode == RESULT_OK){
+                adapter.addPerson(it.data?.getSerializableExtra("person") as Person)
+            }
+        }
     }
 
     private fun init() = with(binding){
-        rcView.layoutManager = GridLayoutManager(this@MainActivity, 3)
+        rcView.layoutManager = GridLayoutManager(this@MainActivity, 2)
         rcView.adapter = adapter
         buttonAdd.setOnClickListener{
-            if(index > 3) index = 0
-            val person = Person(imageIdList[index], "Person $index")
-            adapter.addPerson(person)
-            index++
+            editLauncher?.launch(Intent(this@MainActivity, EditActivity::class.java))
         }
     }
 }

@@ -1,3 +1,5 @@
 package com.example.recyclerview
 
-data class Person(val imageId: Int, val title:String)
+import java.io.Serializable
+
+data class Person(val imageId: Int, val title:String, val desc: String): Serializable
