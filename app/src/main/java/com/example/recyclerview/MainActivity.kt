@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity(), PersonAdapter.Listener {
     }
 
     override fun onClick(person: Person) {
-        Toast.makeText(this, " Нажали на ${person.title}", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, ContentActivity::class.java).apply {
+            putExtra("person", person)
+        })
     }
 }
